@@ -3,6 +3,8 @@ package com.framework.backend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.framework.backend.dto.ExampleDto;
+import com.framework.backend.dto.create_dto.BaseCreateDto;
+import com.framework.backend.dto.simple_dto.BaseSimpleDto;
 import com.framework.backend.entities.BaseEntity;
 import com.framework.backend.service.core.BaseService;
 import org.apache.logging.log4j.Logger;
@@ -20,12 +22,12 @@ import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/api")
-public abstract class BaseController<T extends BaseEntity> {
+public abstract class BaseController<T extends BaseEntity, SIMPLE_DTO extends BaseSimpleDto, DETAIL_DTO extends SIMPLE_DTO, CREATE_DTO extends BaseCreateDto> {
 
     @Autowired
     ObjectMapper objectMapper;
 
-    protected abstract BaseService<T> getService();
+    protected abstract BaseService<T, SIMPLE_DTO, DETAIL_DTO, CREATE_DTO> getService();
 
     protected abstract Logger getLogger();
 
@@ -94,24 +96,24 @@ public abstract class BaseController<T extends BaseEntity> {
 //    Page<T> findAll(Specification<T> spec, Pageable pageable);
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public final ResponseEntity<?> save(@RequestBody T t, @RequestParam(value = "f", required = false) boolean f) throws JsonProcessingException {
-        return _save(t, f);
+    public final ResponseEntity<?> save(@RequestBody CREATE_DTO create_dto, @RequestParam(value = "f", required = false) boolean f) throws JsonProcessingException {
+        return _save(create_dto, f);
     }
 
     @RequestMapping(value = "/saveAll", method = RequestMethod.POST)
-    public final ResponseEntity<?> saveAll(@RequestBody List<T> entities) throws JsonProcessingException {
-        return _saveAll(entities);
+    public final ResponseEntity<?> saveAll(@RequestBody List<CREATE_DTO> dtos) throws JsonProcessingException {
+        return _saveAll(dtos);
     }
 
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public final ResponseEntity<?> update(@RequestBody T t, @RequestParam(value = "f", required = false) boolean f) throws JsonProcessingException {
-        return _update(t, f);
+    public final ResponseEntity<?> update(@RequestBody CREATE_DTO create_dto, @RequestParam(value = "f", required = false) boolean f) throws JsonProcessingException {
+        return _update(create_dto, f);
     }
 
     @RequestMapping(value = "/updateAll", method = RequestMethod.POST)
-    public final ResponseEntity<?> updateAll(@RequestBody List<T> entities) throws JsonProcessingException {
-        return _updateAll(entities);
+    public final ResponseEntity<?> updateAll(@RequestBody List<CREATE_DTO> dtos) throws JsonProcessingException {
+        return _updateAll(dtos);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
@@ -120,13 +122,13 @@ public abstract class BaseController<T extends BaseEntity> {
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public final ResponseEntity<?> delete(@RequestBody T t) throws JsonProcessingException {
-        return _delete(t);
+    public final ResponseEntity<?> delete(@RequestBody SIMPLE_DTO simple_dto) throws JsonProcessingException {
+        return _delete(simple_dto);
     }
 
     @RequestMapping(value = "/deleteAll", method = RequestMethod.POST)
-    public final ResponseEntity<?> deleteAll(@RequestBody List<T> entities, @RequestParam(value = "f", required = false) boolean f) throws JsonProcessingException {
-        return _deleteAll(entities, f);
+    public final ResponseEntity<?> deleteAll(@RequestBody List<SIMPLE_DTO> dtos, @RequestParam(value = "f", required = false) boolean f) throws JsonProcessingException {
+        return _deleteAll(dtos, f);
     }
 
     @RequestMapping(value = "/deleteAll", method = RequestMethod.GET)
@@ -142,63 +144,50 @@ public abstract class BaseController<T extends BaseEntity> {
     protected ResponseEntity<?> _count(ExampleDto<T> exampleDto) throws JsonProcessingException {
         getLogger().debug("Begin count");
         getLogger().debug("Payload: {}", objectMapper.writeValueAsString(exampleDto));
-        long result;
-        if (exampleDto != null) {
-            result = getService().count(exampleDto.toExample());
-        } else {
-            result = getService().count();
-        }
+        long result = exampleDto != null ? getService().count(exampleDto) : getService().count();
         getLogger().debug("Result: {}", result);
         return ResponseEntity.ok(result);
     }
 
-    protected ResponseEntity<?> _save(T t, boolean f) throws JsonProcessingException {
+    protected ResponseEntity<?> _save(CREATE_DTO create_dto, boolean f) throws JsonProcessingException {
         getLogger().debug("Begin saving");
-        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(t));
+        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(create_dto));
         getLogger().debug("Param: f={}", f);
-        if (f) {
-            t = getService().saveAndFlush(t);
-        } else {
-            t = getService().save(t);
-        }
-        getLogger().debug("Result: {}", objectMapper.writeValueAsString(t));
-        return new ResponseEntity<>(t, HttpStatus.CREATED);
+        SIMPLE_DTO result = f ? getService().saveAndFlush(create_dto) : getService().save(create_dto);
+        getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
-    protected ResponseEntity<?> _saveAll(List<T> entities) throws JsonProcessingException {
+    protected ResponseEntity<?> _saveAll(List<CREATE_DTO> dtos) throws JsonProcessingException {
         getLogger().debug("Begin saving");
-        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(entities));
-        entities = getService().saveAll(entities);
-        getLogger().debug("Result: {}", objectMapper.writeValueAsString(entities));
-        return new ResponseEntity<>(entities, HttpStatus.CREATED);
+        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(dtos));
+        List<SIMPLE_DTO> result = getService().saveAll(dtos);
+        getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
-    protected ResponseEntity<?> _update(T t, boolean f) throws JsonProcessingException {
+    protected ResponseEntity<?> _update(CREATE_DTO create_dto, boolean f) throws JsonProcessingException {
         getLogger().debug("Begin updating");
-        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(t));
+        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(create_dto));
         getLogger().debug("Param: f={}", f);
-        if (f) {
-            t = getService().updateAndFlush(t);
-        } else {
-            t = getService().update(t);
-        }
-        getLogger().debug("Result: {}", objectMapper.writeValueAsString(t));
-        return new ResponseEntity<>(t, HttpStatus.CREATED);
+        SIMPLE_DTO result = f ? getService().updateAndFlush(create_dto) : getService().update(create_dto);
+        getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
-    protected ResponseEntity<?> _updateAll(List<T> entities) throws JsonProcessingException {
+    protected ResponseEntity<?> _updateAll(List<CREATE_DTO> dtos) throws JsonProcessingException {
         getLogger().debug("Begin updating");
-        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(entities));
-        entities = getService().updateAll(entities);
-        getLogger().debug("Result: {}", objectMapper.writeValueAsString(entities));
-        return new ResponseEntity<>(entities, HttpStatus.CREATED);
+        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(dtos));
+        List<SIMPLE_DTO> result = getService().updateAll(dtos);
+        getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     protected ResponseEntity<?> _findAll(Integer p, Integer s, String d, String prop) throws JsonProcessingException {
         getLogger().debug("Begin getting all");
         Sort sort = createSort(d, prop);
         PageRequest pageRequest = createPageRequest(p, s, sort);
-        Iterable<T> result;
+        Iterable<SIMPLE_DTO> result;
         if (sort == null && pageRequest == null) {
             result = getService().findAll();
         } else if (pageRequest != null) {
@@ -214,13 +203,13 @@ public abstract class BaseController<T extends BaseEntity> {
         getLogger().debug("Begin getting all");
         Sort sort = createSort(d, prop);
         PageRequest pageRequest = createPageRequest(p, s, sort);
-        Iterable<T> result;
+        Iterable<SIMPLE_DTO> result;
         if (sort == null && pageRequest == null) {
-            result = getService().findAll(exampleDto.toExample());
+            result = getService().findAll(exampleDto);
         } else if (pageRequest != null) {
-            result = getService().findAll(exampleDto.toExample(), pageRequest);
+            result = getService().findAll(exampleDto, pageRequest);
         } else {
-            result = getService().findAll(exampleDto.toExample(), sort);
+            result = getService().findAll(exampleDto, sort);
         }
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
         return ResponseEntity.ok(result);
@@ -229,7 +218,7 @@ public abstract class BaseController<T extends BaseEntity> {
     protected ResponseEntity<?> _findAllById(List<Integer> ids) throws JsonProcessingException {
         getLogger().debug("Begin getting all");
         getLogger().debug("Payload: {}", objectMapper.writeValueAsString(ids));
-        List<T> result = getService().findAllById(ids);
+        List<SIMPLE_DTO> result = getService().findAllById(ids);
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
         return ResponseEntity.ok(result);
     }
@@ -247,21 +236,21 @@ public abstract class BaseController<T extends BaseEntity> {
         return ResponseEntity.noContent().build();
     }
 
-    protected ResponseEntity<?> _delete(T t) throws JsonProcessingException {
+    protected ResponseEntity<?> _delete(SIMPLE_DTO simple_dto) throws JsonProcessingException {
         getLogger().debug("Begin deleting");
-        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(t));
-        getService().delete(t);
+        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(simple_dto));
+        getService().delete(simple_dto);
         return ResponseEntity.noContent().build();
     }
 
-    protected ResponseEntity<?> _deleteAll(List<T> entities, boolean f) throws JsonProcessingException {
+    protected ResponseEntity<?> _deleteAll(List<SIMPLE_DTO> dtos, boolean f) throws JsonProcessingException {
         getLogger().debug("Begin deleting");
-        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(entities));
+        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(dtos));
         getLogger().debug("Param f={}", f);
         if (f) {
-            getService().deleteInBatch(entities);
+            getService().deleteInBatch(dtos);
         } else {
-            getService().deleteAll(entities);
+            getService().deleteAll(dtos);
         }
         return ResponseEntity.noContent().build();
     }
@@ -280,7 +269,7 @@ public abstract class BaseController<T extends BaseEntity> {
     protected ResponseEntity<?> _getOne(Integer id) throws JsonProcessingException {
         getLogger().debug("Begin getting one");
         getLogger().debug("Param id={}", id);
-        T result = getService().getOne(id);
+        DETAIL_DTO result = getService().getOne(id);
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
         return ResponseEntity.ok(result);
     }
@@ -288,14 +277,15 @@ public abstract class BaseController<T extends BaseEntity> {
     protected ResponseEntity<?> _findById(Integer id) throws JsonProcessingException {
         getLogger().debug("Begin finding by id");
         getLogger().debug("Param id={}", id);
-        Optional<T> result = getService().findById(id);
+        Optional<DETAIL_DTO> temp = getService().findById(id);
+        Object result = temp.isPresent() ? temp.get() : temp;
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
         return ResponseEntity.ok(result);
     }
 
     protected ResponseEntity<?> _findOne(ExampleDto<T> exampleDto) throws JsonProcessingException {
         getLogger().debug("Begin finding one");
-        Optional<T> temp = getService().findOne(exampleDto.toExample());
+        Optional<DETAIL_DTO> temp = getService().findOne(exampleDto);
         Object result = temp.isPresent() ? temp.get() : temp;
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
         return ResponseEntity.ok(result);
