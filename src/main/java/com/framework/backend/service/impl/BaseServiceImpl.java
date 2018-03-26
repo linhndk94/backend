@@ -10,7 +10,6 @@ import com.framework.backend.service.core.BaseService;
 import com.framework.backend.support.ExampleFactory;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends BaseSimpleDto, DETAIL_DTO extends SIMPLE_DTO, CREATE_DTO extends BaseCreateDto> implements BaseService<T, SIMPLE_DTO, DETAIL_DTO, CREATE_DTO> {
@@ -30,7 +28,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
 
     protected abstract T createEntity(CREATE_DTO create_dto);
 
-    protected abstract T createEntity(SIMPLE_DTO create_dto);
+    protected abstract T createEntity(SIMPLE_DTO simple_dto);
 
     protected abstract SIMPLE_DTO createSimpleDto(T entity);
 

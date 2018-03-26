@@ -2,6 +2,7 @@ package com.framework.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.framework.backend.annotations.CustomRestController;
 import com.framework.backend.dto.ExampleDto;
 import com.framework.backend.dto.create_dto.BaseCreateDto;
 import com.framework.backend.dto.simple_dto.BaseSimpleDto;
@@ -13,15 +14,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
 
-@RequestMapping("/api")
+@CustomRestController
 public abstract class BaseController<T extends BaseEntity, SIMPLE_DTO extends BaseSimpleDto, DETAIL_DTO extends SIMPLE_DTO, CREATE_DTO extends BaseCreateDto> {
 
     @Autowired
@@ -31,43 +32,43 @@ public abstract class BaseController<T extends BaseEntity, SIMPLE_DTO extends Ba
 
     protected abstract Logger getLogger();
 
-    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    @GetMapping(value = "/count")
     public final ResponseEntity<?> count() throws JsonProcessingException {
         return _count(null);
     }
 
-    @RequestMapping(value = "/count", method = RequestMethod.POST)
+    @PostMapping(value = "/count")
     public final ResponseEntity<?> count(@RequestBody ExampleDto<T> exampleDto) throws JsonProcessingException {
         return _count(exampleDto);
     }
 
 //    long count(Specification<T> spec);
 
-    @RequestMapping(value = "/existsById", method = RequestMethod.GET)
+    @GetMapping(value = "/existsById")
     public final ResponseEntity<?> existsById(@RequestParam(value = "id") Integer id) {
         return _existsById(id);
     }
 
 //    <S extends T> boolean exists(Example<S> example);
 
-    @RequestMapping(value = "/getOne", method = RequestMethod.GET)
+    @GetMapping(value = "/getOne")
     public final ResponseEntity<?> getOne(@RequestParam(value = "id") Integer id) throws JsonProcessingException {
         return _getOne(id);
     }
 
-    @RequestMapping(value = "/findById", method = RequestMethod.GET)
+    @GetMapping(value = "/findById")
     public final ResponseEntity<?> findById(@RequestParam(value = "id") Integer id) throws JsonProcessingException {
         return _findById(id);
     }
 
-    @RequestMapping(value = "/findOne", method = RequestMethod.POST)
+    @PostMapping(value = "/findOne")
     public final ResponseEntity<?> findOne(@RequestBody ExampleDto<T> exampleDto) throws JsonProcessingException {
         return _findOne(exampleDto);
     }
 
     //    Optional<T> findOne(Specification<T> spec);
 
-    @RequestMapping(value = "/findAll", method = RequestMethod.GET)
+    @GetMapping(value = "/findAll")
     public final ResponseEntity<?> findAll(@RequestParam(value = "p", required = false) Integer p,
                                            @RequestParam(value = "s", required = false) Integer s,
                                            @RequestParam(value = "d", required = false) String d,
@@ -75,12 +76,12 @@ public abstract class BaseController<T extends BaseEntity, SIMPLE_DTO extends Ba
         return _findAll(p, s, d, prop);
     }
 
-    @RequestMapping(value = "/findAllById", method = RequestMethod.POST)
+    @PostMapping(value = "/findAllById")
     public final ResponseEntity<?> findAllById(@RequestBody List<Integer> ids) throws JsonProcessingException {
         return _findAllById(ids);
     }
 
-    @RequestMapping(value = "/findAll", method = RequestMethod.POST)
+    @PostMapping(value = "/findAll")
     public final ResponseEntity<?> findAll(@RequestBody ExampleDto<T> exampleDto,
                                            @RequestParam(value = "p", required = false) Integer p,
                                            @RequestParam(value = "s", required = false) Integer s,
@@ -95,48 +96,48 @@ public abstract class BaseController<T extends BaseEntity, SIMPLE_DTO extends Ba
 
 //    Page<T> findAll(Specification<T> spec, Pageable pageable);
 
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @PostMapping(value = "/save")
     public final ResponseEntity<?> save(@RequestBody CREATE_DTO create_dto, @RequestParam(value = "f", required = false) boolean f) throws JsonProcessingException {
         return _save(create_dto, f);
     }
 
-    @RequestMapping(value = "/saveAll", method = RequestMethod.POST)
+    @PostMapping(value = "/saveAll")
     public final ResponseEntity<?> saveAll(@RequestBody List<CREATE_DTO> dtos) throws JsonProcessingException {
         return _saveAll(dtos);
     }
 
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @PostMapping(value = "/update")
     public final ResponseEntity<?> update(@RequestBody CREATE_DTO create_dto, @RequestParam(value = "f", required = false) boolean f) throws JsonProcessingException {
         return _update(create_dto, f);
     }
 
-    @RequestMapping(value = "/updateAll", method = RequestMethod.POST)
+    @PostMapping(value = "/updateAll")
     public final ResponseEntity<?> updateAll(@RequestBody List<CREATE_DTO> dtos) throws JsonProcessingException {
         return _updateAll(dtos);
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    @GetMapping(value = "/delete")
     public final ResponseEntity<?> deleteById(@RequestParam(value = "id") Integer id) {
         return _deleteById(id);
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @PostMapping(value = "/delete")
     public final ResponseEntity<?> delete(@RequestBody SIMPLE_DTO simple_dto) throws JsonProcessingException {
         return _delete(simple_dto);
     }
 
-    @RequestMapping(value = "/deleteAll", method = RequestMethod.POST)
+    @PostMapping(value = "/deleteAll")
     public final ResponseEntity<?> deleteAll(@RequestBody List<SIMPLE_DTO> dtos, @RequestParam(value = "f", required = false) boolean f) throws JsonProcessingException {
         return _deleteAll(dtos, f);
     }
 
-    @RequestMapping(value = "/deleteAll", method = RequestMethod.GET)
+    @GetMapping(value = "/deleteAll")
     public final ResponseEntity<?> deleteAll(@RequestParam(value = "f", required = false) boolean f) {
         return _deleteAll(f);
     }
 
-    @RequestMapping(value = "/flush", method = RequestMethod.GET)
+    @GetMapping(value = "/flush")
     public final ResponseEntity<?> flush() {
         return _flush();
     }
