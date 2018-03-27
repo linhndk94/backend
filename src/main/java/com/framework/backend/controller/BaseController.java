@@ -2,7 +2,6 @@ package com.framework.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.framework.backend.annotations.CustomRestController;
 import com.framework.backend.dto.create_dto.BaseCreateDto;
 import com.framework.backend.dto.simple_dto.BaseSimpleDto;
 import com.framework.backend.service.core.BaseService;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Optional;
 
-@CustomRestController
 public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DTO extends SIMPLE_DTO, CREATE_DTO extends BaseCreateDto> {
 
     @Autowired

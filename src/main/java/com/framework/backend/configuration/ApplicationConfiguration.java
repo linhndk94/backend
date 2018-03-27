@@ -15,12 +15,7 @@ public class ApplicationConfiguration {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         // TODO: 3/3/2018 Turn off this for production
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+//        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         return objectMapper;
     }
-
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-
 }
