@@ -2,6 +2,7 @@ package com.framework.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.framework.backend.dto.ResponseDto;
 import com.framework.backend.dto.create_dto.BaseCreateDto;
 import com.framework.backend.dto.simple_dto.BaseSimpleDto;
 import com.framework.backend.service.core.BaseService;
@@ -113,7 +114,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         getLogger().debug("Begin count");
         long result = getService().count();
         getLogger().debug("Result: {}", result);
-        return ResponseEntity.ok(result);
+        return ResponseDto.build().withHttpStatus(HttpStatus.OK).withData(result).toResponseEntity();
     }
 
     protected ResponseEntity<?> _save(CREATE_DTO create_dto, boolean f) throws JsonProcessingException {
@@ -122,7 +123,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         getLogger().debug("Param: f={}", f);
         SIMPLE_DTO result = f ? getService().saveAndFlush(create_dto) : getService().save(create_dto);
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
+        return ResponseDto.build().withHttpStatus(HttpStatus.CREATED).withData(result).toResponseEntity();
     }
 
     protected ResponseEntity<?> _saveAll(List<CREATE_DTO> dtos) throws JsonProcessingException {
@@ -130,7 +131,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         getLogger().debug("Payload: {}", objectMapper.writeValueAsString(dtos));
         List<SIMPLE_DTO> result = getService().saveAll(dtos);
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
+        return ResponseDto.build().withHttpStatus(HttpStatus.CREATED).withData(result).toResponseEntity();
     }
 
     protected ResponseEntity<?> _update(CREATE_DTO create_dto, boolean f) throws JsonProcessingException {
@@ -139,7 +140,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         getLogger().debug("Param: f={}", f);
         SIMPLE_DTO result = f ? getService().updateAndFlush(create_dto) : getService().update(create_dto);
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
+        return ResponseDto.build().withHttpStatus(HttpStatus.CREATED).withData(result).toResponseEntity();
     }
 
     protected ResponseEntity<?> _updateAll(List<CREATE_DTO> dtos) throws JsonProcessingException {
@@ -147,7 +148,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         getLogger().debug("Payload: {}", objectMapper.writeValueAsString(dtos));
         List<SIMPLE_DTO> result = getService().updateAll(dtos);
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
+        return ResponseDto.build().withHttpStatus(HttpStatus.CREATED).withData(result).toResponseEntity();
     }
 
     protected ResponseEntity<?> _findAll(Integer p, Integer s, String d, String prop) throws JsonProcessingException {
@@ -163,7 +164,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
             result = getService().findAll(sort);
         }
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
-        return ResponseEntity.ok(result);
+        return ResponseDto.build().withHttpStatus(HttpStatus.OK).withData(result).toResponseEntity();
     }
 
     protected ResponseEntity<?> _findAllById(List<Integer> ids) throws JsonProcessingException {
@@ -171,13 +172,13 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         getLogger().debug("Payload: {}", objectMapper.writeValueAsString(ids));
         List<SIMPLE_DTO> result = getService().findAllById(ids);
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
-        return ResponseEntity.ok(result);
+        return ResponseDto.build().withHttpStatus(HttpStatus.OK).withData(result).toResponseEntity();
     }
 
     protected ResponseEntity<?> _flush() {
         getLogger().debug("Begin flushing");
         getService().flush();
-        return ResponseEntity.ok().build();
+        return ResponseDto.build().withHttpStatus(HttpStatus.OK).toResponseEntity();
     }
 
     protected ResponseEntity<?> _deleteById(Integer id) {
@@ -191,7 +192,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         getLogger().debug("Begin deleting");
         getLogger().debug("Payload: {}", objectMapper.writeValueAsString(simple_dto));
         getService().delete(simple_dto);
-        return ResponseEntity.noContent().build();
+        return ResponseDto.build().withHttpStatus(HttpStatus.NO_CONTENT).toResponseEntity();
     }
 
     protected ResponseEntity<?> _deleteAll(List<SIMPLE_DTO> dtos, boolean f) throws JsonProcessingException {
@@ -203,7 +204,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         } else {
             getService().deleteAll(dtos);
         }
-        return ResponseEntity.noContent().build();
+        return ResponseDto.build().withHttpStatus(HttpStatus.NO_CONTENT).toResponseEntity();
     }
 
     protected ResponseEntity<?> _deleteAll(boolean f) {
@@ -214,7 +215,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         } else {
             getService().deleteAll();
         }
-        return ResponseEntity.noContent().build();
+        return ResponseDto.build().withHttpStatus(HttpStatus.NO_CONTENT).toResponseEntity();
     }
 
     protected ResponseEntity<?> _getOne(Integer id) throws JsonProcessingException {
@@ -222,7 +223,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         getLogger().debug("Param id={}", id);
         DETAIL_DTO result = getService().getOne(id);
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
-        return ResponseEntity.ok(result);
+        return ResponseDto.build().withHttpStatus(HttpStatus.OK).withData(result).toResponseEntity();
     }
 
     protected ResponseEntity<?> _findById(Integer id) throws JsonProcessingException {
@@ -231,7 +232,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         Optional<DETAIL_DTO> temp = getService().findById(id);
         Object result = temp.isPresent() ? temp.get() : temp;
         getLogger().debug("Result: {}", objectMapper.writeValueAsString(result));
-        return ResponseEntity.ok(result);
+        return ResponseDto.build().withHttpStatus(HttpStatus.OK).withData(result).toResponseEntity();
     }
 
     protected ResponseEntity<?> _existsById(Integer id) {
@@ -239,7 +240,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         getLogger().debug("Param id={}", id);
         boolean result = getService().existsById(id);
         getLogger().debug("Result: {}", result);
-        return ResponseEntity.ok(result);
+        return ResponseDto.build().withHttpStatus(HttpStatus.OK).withData(result).toResponseEntity();
     }
 
     private Sort createSort(String d, String prop) throws JsonProcessingException {
