@@ -1,13 +1,11 @@
 package com.framework.backend.service.impl;
 
-import com.framework.backend.dto.ExampleDto;
 import com.framework.backend.dto.create_dto.BaseCreateDto;
 import com.framework.backend.dto.simple_dto.BaseSimpleDto;
 import com.framework.backend.entities.BaseEntity;
 import com.framework.backend.exception.DataAccessException;
 import com.framework.backend.repository.core.BaseRepository;
 import com.framework.backend.service.core.BaseService;
-import com.framework.backend.support.ExampleFactory;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -20,7 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends BaseSimpleDto, DETAIL_DTO extends SIMPLE_DTO, CREATE_DTO extends BaseCreateDto> implements BaseService<T, SIMPLE_DTO, DETAIL_DTO, CREATE_DTO> {
+public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends BaseSimpleDto, DETAIL_DTO extends SIMPLE_DTO, CREATE_DTO extends BaseCreateDto> implements BaseService<SIMPLE_DTO, DETAIL_DTO, CREATE_DTO> {
 
     protected abstract Logger getLogger();
 
@@ -59,10 +57,6 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
 
     protected void beforeRetrieve(Iterable<Integer> ids) {
     }
-
-    protected void beforeRetrieve(ExampleDto exampleDto) {
-    }
-
 
     protected void beforeDelete() {
     }
@@ -124,22 +118,6 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     public List<SIMPLE_DTO> findAll() {
         beforeRetrieve();
         List<SIMPLE_DTO> result = getBaseRepository().findAll().stream().map(this::createSimpleDto).collect(Collectors.toList());
-        afterRetrieve();
-        return result;
-    }
-
-    @Override
-    public <S extends T> List<SIMPLE_DTO> findAll(ExampleDto<S> exampleDto) {
-        beforeRetrieve(exampleDto);
-        List<SIMPLE_DTO> result = getBaseRepository().findAll(ExampleFactory.createExample(exampleDto)).stream().map(this::createSimpleDto).collect(Collectors.toList());
-        afterRetrieve();
-        return result;
-    }
-
-    @Override
-    public <S extends T> List<SIMPLE_DTO> findAll(ExampleDto<S> exampleDto, Sort sort) {
-        beforeRetrieve(exampleDto);
-        List<SIMPLE_DTO> result = getBaseRepository().findAll(ExampleFactory.createExample(exampleDto), sort).stream().map(this::createSimpleDto).collect(Collectors.toList());
         afterRetrieve();
         return result;
     }
@@ -248,71 +226,12 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     }
 
     @Override
-    public <S extends T> boolean exists(ExampleDto<S> exampleDto) {
-        beforeRetrieve(exampleDto);
-        boolean temp = getBaseRepository().exists(ExampleFactory.createExample(exampleDto));
-        afterRetrieve();
-        return temp;
-    }
-
-    @Override
     public boolean existsById(Integer id) {
         beforeRetrieve(id);
         boolean temp = getBaseRepository().existsById(id);
         afterRetrieve();
         return temp;
     }
-
-    @Override
-    public <S extends T> long count(ExampleDto<S> exampleDto) {
-        beforeRetrieve();
-        long result = getBaseRepository().count(ExampleFactory.createExample(exampleDto));
-        afterRetrieve();
-        return result;
-    }
-
-
-//    @Override
-//    public long count(Specification<T> spec) {
-//        return 0;
-//    }
-
-    @Override
-    public <S extends T> Optional<DETAIL_DTO> findOne(ExampleDto<S> exampleDto) {
-        beforeRetrieve();
-        Optional<DETAIL_DTO> result = Optional.of(createDetailDto(getBaseRepository().findOne(ExampleFactory.createExample(exampleDto)).get()));
-        afterRetrieve();
-        return result;
-    }
-
-//    @Override
-//    public Optional<T> findOne(Specification<T> spec) {
-//        return Optional.empty();
-//    }
-
-    @Override
-    public <S extends T> Page<SIMPLE_DTO> findAll(ExampleDto<S> exampleDto, Pageable pageable) {
-        beforeRetrieve();
-        Page<SIMPLE_DTO> result = getBaseRepository().findAll(ExampleFactory.createExample(exampleDto), pageable).map(this::createSimpleDto);
-        afterRetrieve();
-        return result;
-    }
-
-//    @Override
-//    public List<T> findAll(Specification<T> spec) {
-//        return null;
-//    }
-//
-//    @Override
-//    public List<T> findAll(Specification<T> spec, Sort sort) {
-//        return null;
-//    }
-//
-//    @Override
-//    public Page<T> findAll(Specification<T> spec, Pageable pageable) {
-//        return null;
-//    }
-
 
     @Override
     public Optional<DETAIL_DTO> findById(Integer id) {

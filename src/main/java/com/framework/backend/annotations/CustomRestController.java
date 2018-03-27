@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CustomRestController {
     @AliasFor("apiVersion")
-    String value();
+    String value() default "1";
 
     @AliasFor("value")
     String apiVersion() default "1";
