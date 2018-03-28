@@ -52,16 +52,16 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     protected void beforeRetrieve() {
     }
 
-    protected void beforeRetrieve(Integer id) {
+    protected void beforeRetrieve(Long id) {
     }
 
-    protected void beforeRetrieve(Iterable<Integer> ids) {
+    protected void beforeRetrieve(Iterable<Long> ids) {
     }
 
     protected void beforeDelete() {
     }
 
-    protected void beforeDelete(Integer id) {
+    protected void beforeDelete(Long id) {
     }
 
     protected void beforeDelete(SIMPLE_DTO simple_dto) {
@@ -139,7 +139,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     }
 
     @Override
-    public List<SIMPLE_DTO> findAllById(Iterable<Integer> ids) {
+    public List<SIMPLE_DTO> findAllById(Iterable<Long> ids) {
         beforeRetrieve(ids);
         List<SIMPLE_DTO> result = getBaseRepository().findAllById(ids).stream().map(this::createSimpleDto).collect(Collectors.toList());
         afterRetrieve();
@@ -203,7 +203,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         beforeDelete(id);
         getBaseRepository().deleteById(id);
         afterDelete();
@@ -217,7 +217,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     }
 
     @Override
-    public DETAIL_DTO getOne(Integer id) {
+    public DETAIL_DTO getOne(Long id) {
         beforeRetrieve(id);
         checkExists(id);
         DETAIL_DTO result = createDetailDto(getBaseRepository().getOne(id));
@@ -226,7 +226,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     }
 
     @Override
-    public boolean existsById(Integer id) {
+    public boolean existsById(Long id) {
         beforeRetrieve(id);
         boolean temp = getBaseRepository().existsById(id);
         afterRetrieve();
@@ -234,7 +234,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     }
 
     @Override
-    public Optional<DETAIL_DTO> findById(Integer id) {
+    public Optional<DETAIL_DTO> findById(Long id) {
         beforeRetrieve();
         Optional<DETAIL_DTO> result = Optional.of(createDetailDto(getBaseRepository().findById(id).get()));
         afterRetrieve();
@@ -255,7 +255,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
         afterDelete();
     }
 
-    private void checkExists(Integer id) {
+    private void checkExists(Long id) {
         if (!existsById(id)) {
             String message = String.format("ID: %s not found", id);
             getLogger().error(message);

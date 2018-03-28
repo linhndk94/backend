@@ -1,4 +1,4 @@
-package com.framework.backend.controller;
+package com.framework.backend.controller.rest_service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,18 +36,18 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
 
 
     @GetMapping(value = "/existsById")
-    public final ResponseEntity<?> existsById(@RequestParam(value = "id") Integer id) {
+    public final ResponseEntity<?> existsById(@RequestParam(value = "id") Long id) {
         return _existsById(id);
     }
 
 
     @GetMapping(value = "/getOne")
-    public final ResponseEntity<?> getOne(@RequestParam(value = "id") Integer id) throws JsonProcessingException {
+    public final ResponseEntity<?> getOne(@RequestParam(value = "id") Long id) throws JsonProcessingException {
         return _getOne(id);
     }
 
     @GetMapping(value = "/findById")
-    public final ResponseEntity<?> findById(@RequestParam(value = "id") Integer id) throws JsonProcessingException {
+    public final ResponseEntity<?> findById(@RequestParam(value = "id") Long id) throws JsonProcessingException {
         return _findById(id);
     }
 
@@ -60,7 +60,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
     }
 
     @PostMapping(value = "/findAllById")
-    public final ResponseEntity<?> findAllById(@RequestBody List<Integer> ids) throws JsonProcessingException {
+    public final ResponseEntity<?> findAllById(@RequestBody List<Long> ids) throws JsonProcessingException {
         return _findAllById(ids);
     }
 
@@ -85,8 +85,8 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         return _updateAll(dtos);
     }
 
-    @GetMapping(value = "/delete")
-    public final ResponseEntity<?> deleteById(@RequestParam(value = "id") Integer id) {
+    @GetMapping(value = "/deleteById")
+    public final ResponseEntity<?> deleteById(@RequestParam(value = "id") Long id) {
         return _deleteById(id);
     }
 
@@ -167,7 +167,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         return ResponseDto.build().withHttpStatus(HttpStatus.OK).withData(result).toResponseEntity();
     }
 
-    protected ResponseEntity<?> _findAllById(List<Integer> ids) throws JsonProcessingException {
+    protected ResponseEntity<?> _findAllById(List<Long> ids) throws JsonProcessingException {
         getLogger().debug("Begin getting all");
         getLogger().debug("Payload: {}", objectMapper.writeValueAsString(ids));
         List<SIMPLE_DTO> result = getService().findAllById(ids);
@@ -181,7 +181,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         return ResponseDto.build().withHttpStatus(HttpStatus.OK).toResponseEntity();
     }
 
-    protected ResponseEntity<?> _deleteById(Integer id) {
+    protected ResponseEntity<?> _deleteById(Long id) {
         getLogger().debug("Begin deleting");
         getLogger().debug("Param id={}", id);
         getService().deleteById(id);
@@ -218,7 +218,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         return ResponseDto.build().withHttpStatus(HttpStatus.NO_CONTENT).toResponseEntity();
     }
 
-    protected ResponseEntity<?> _getOne(Integer id) throws JsonProcessingException {
+    protected ResponseEntity<?> _getOne(Long id) throws JsonProcessingException {
         getLogger().debug("Begin getting one");
         getLogger().debug("Param id={}", id);
         DETAIL_DTO result = getService().getOne(id);
@@ -226,7 +226,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         return ResponseDto.build().withHttpStatus(HttpStatus.OK).withData(result).toResponseEntity();
     }
 
-    protected ResponseEntity<?> _findById(Integer id) throws JsonProcessingException {
+    protected ResponseEntity<?> _findById(Long id) throws JsonProcessingException {
         getLogger().debug("Begin finding by id");
         getLogger().debug("Param id={}", id);
         Optional<DETAIL_DTO> temp = getService().findById(id);
@@ -235,7 +235,7 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         return ResponseDto.build().withHttpStatus(HttpStatus.OK).withData(result).toResponseEntity();
     }
 
-    protected ResponseEntity<?> _existsById(Integer id) {
+    protected ResponseEntity<?> _existsById(Long id) {
         getLogger().debug("Begin checking existed one");
         getLogger().debug("Param id={}", id);
         boolean result = getService().existsById(id);

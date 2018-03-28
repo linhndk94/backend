@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +27,10 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 public class DummyServiceImpl extends BaseServiceImpl<Dummy, DummySimpleDto, DummyDetailDto, DummyCreateDto> implements DummyService {
 
     @Autowired
-    DummyRepository dummyRepository;
+    private DummyRepository dummyRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     protected Logger getLogger() {
@@ -54,7 +58,7 @@ public class DummyServiceImpl extends BaseServiceImpl<Dummy, DummySimpleDto, Dum
 
     @Override
     protected DummySimpleDto createSimpleDto(Dummy entity) {
-        DummySimpleDto dummySimpleDto = new DummyDetailDto();
+        DummySimpleDto dummySimpleDto = new DummySimpleDto();
         copyPojo(entity, dummySimpleDto);
         return dummySimpleDto;
     }
@@ -70,6 +74,7 @@ public class DummyServiceImpl extends BaseServiceImpl<Dummy, DummySimpleDto, Dum
     protected void beforeCreate(DummyCreateDto dummyCreateDto) {
         if (checkDuplicateUsername(dummyCreateDto.getUsername()))
             throw BusinessException.invalidParams(String.format("Username: %s is already existed", dummyCreateDto.getUsername()));
+        dummyCreateDto.setPassword(passwordEncoder.encode(dummyCreateDto.getPassword()));
         super.beforeCreate(dummyCreateDto);
     }
 
@@ -79,6 +84,7 @@ public class DummyServiceImpl extends BaseServiceImpl<Dummy, DummySimpleDto, Dum
         if (errors.size() > 0) {
             throw BusinessException.invalidParams("One or more usernames are already existed", errors);
         }
+        dummyCreateDtos.forEach(dummyCreateDto -> dummyCreateDto.setPassword(passwordEncoder.encode(dummyCreateDto.getPassword())));
         super.beforeCreate(dummyCreateDtos);
     }
 

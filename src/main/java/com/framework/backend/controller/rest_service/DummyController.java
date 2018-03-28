@@ -1,4 +1,4 @@
-package com.framework.backend.controller;
+package com.framework.backend.controller.rest_service;
 
 import com.framework.backend.dto.create_dto.DummyCreateDto;
 import com.framework.backend.dto.detail_dto.DummyDetailDto;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/dummy")
+@RequestMapping("/api/dummy")
 @Log4j2
 public class DummyController extends BaseController<DummySimpleDto, DummyDetailDto, DummyCreateDto> {
 

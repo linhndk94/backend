@@ -13,15 +13,15 @@ public interface BaseService<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DTO extend
 
     long count();
 
-    boolean existsById(Integer id);
+    boolean existsById(Long id);
 
-    DETAIL_DTO getOne(Integer id);
+    DETAIL_DTO getOne(Long id);
 
-    Optional<DETAIL_DTO> findById(Integer id);
+    Optional<DETAIL_DTO> findById(Long id);
 
     List<SIMPLE_DTO> findAll();
 
-    List<SIMPLE_DTO> findAllById(Iterable<Integer> ids);
+    List<SIMPLE_DTO> findAllById(Iterable<Long> ids);
 
     List<SIMPLE_DTO> findAll(Sort sort);
 
@@ -39,7 +39,7 @@ public interface BaseService<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DTO extend
 
     List<SIMPLE_DTO> updateAll(Iterable<CREATE_DTO> entities);
 
-    void deleteById(Integer id);
+    void deleteById(Long id);
 
     void delete(SIMPLE_DTO simple_dto);
 

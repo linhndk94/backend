@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
 import javax.persistence.EntityManager;
 
-public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepository<T, Integer> implements BaseRepository<T> {
+public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepository<T, Long> implements BaseRepository<T> {
 
     private EntityManager entityManager;
 

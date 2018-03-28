@@ -3,10 +3,14 @@ package com.framework.backend.configuration;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@Log4j2
 public class ApplicationConfiguration {
 
     @Bean
@@ -18,4 +22,14 @@ public class ApplicationConfiguration {
 //        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         return objectMapper;
     }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+//    @Autowired
+//    public void authenticationManager(AuthenticationManagerBuilder authenticationManagerBuilder, DummyRepository dummyRepository) throws Exception {
+//        authenticationManagerBuilder.userDetailsService(dummyRepository::getByUsername);
+//    }
 }
