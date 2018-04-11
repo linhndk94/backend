@@ -9,8 +9,10 @@ import com.framework.backend.service.core.DummyService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Log4j2
+@Service
 public class DummyServiceImpl extends BaseServiceImpl<Dummy, DummySimpleDto, DummyDetailDto, DummyCreateDto> implements DummyService {
 
     @Autowired
@@ -31,9 +33,9 @@ public class DummyServiceImpl extends BaseServiceImpl<Dummy, DummySimpleDto, Dum
     }
 
     @Override
-    protected Dummy createEntity(DummySimpleDto dummySimpleDto) {
+    protected Dummy createEntity(Long id) {
         Dummy dummy = new Dummy();
-        dummy.setId(dummySimpleDto.getId());
+        dummy.setId(id);
         return dummy;
     }
 

@@ -41,11 +41,9 @@ public interface BaseService<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DTO extend
 
     void deleteById(Long id);
 
-    void delete(SIMPLE_DTO simple_dto);
+    void deleteAll(Iterable<Long> ids);
 
-    void deleteAll(Iterable<SIMPLE_DTO> dtos);
-
-    void deleteInBatch(Iterable<SIMPLE_DTO> dtos);
+    void deleteInBatch(Iterable<Long> ids);
 
     void deleteAll();
 

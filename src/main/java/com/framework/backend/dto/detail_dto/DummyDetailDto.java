@@ -9,5 +9,5 @@ import lombok.*;
 @Setter
 @ToString
 public class DummyDetailDto extends DummySimpleDto {
-    private Integer phoneNumber;
+    private String phoneNumber;
 }

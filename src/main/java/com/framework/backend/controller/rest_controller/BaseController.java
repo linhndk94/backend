@@ -90,14 +90,9 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         return _deleteById(id);
     }
 
-    @PostMapping(value = "/delete")
-    public final ResponseEntity<?> delete(@RequestBody SIMPLE_DTO simple_dto) throws JsonProcessingException {
-        return _delete(simple_dto);
-    }
-
     @PostMapping(value = "/deleteAll")
-    public final ResponseEntity<?> deleteAll(@RequestBody List<SIMPLE_DTO> dtos, @RequestParam(value = "f", required = false) boolean f) throws JsonProcessingException {
-        return _deleteAll(dtos, f);
+    public final ResponseEntity<?> deleteAll(@RequestBody List<Long> ids, @RequestParam(value = "f", required = false) boolean f) throws JsonProcessingException {
+        return _deleteAll(ids, f);
     }
 
     @GetMapping(value = "/deleteAll")
@@ -188,21 +183,14 @@ public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DT
         return ResponseEntity.noContent().build();
     }
 
-    protected ResponseEntity<?> _delete(SIMPLE_DTO simple_dto) throws JsonProcessingException {
+    protected ResponseEntity<?> _deleteAll(List<Long> ids, boolean f) throws JsonProcessingException {
         getLogger().debug("Begin deleting");
-        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(simple_dto));
-        getService().delete(simple_dto);
-        return ResponseDto.build().withHttpStatus(HttpStatus.NO_CONTENT).toResponseEntity();
-    }
-
-    protected ResponseEntity<?> _deleteAll(List<SIMPLE_DTO> dtos, boolean f) throws JsonProcessingException {
-        getLogger().debug("Begin deleting");
-        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(dtos));
+        getLogger().debug("Payload: {}", objectMapper.writeValueAsString(ids));
         getLogger().debug("Param f={}", f);
         if (f) {
-            getService().deleteInBatch(dtos);
+            getService().deleteInBatch(ids);
         } else {
-            getService().deleteAll(dtos);
+            getService().deleteAll(ids);
         }
         return ResponseDto.build().withHttpStatus(HttpStatus.NO_CONTENT).toResponseEntity();
     }

@@ -30,7 +30,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
 
     protected abstract T createEntity(CREATE_DTO create_dto);
 
-    protected abstract T createEntity(SIMPLE_DTO simple_dto);
+    protected abstract T createEntity(Long id);
 
     protected abstract SIMPLE_DTO createSimpleDto(T entity);
 
@@ -68,10 +68,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     protected void beforeDelete(Long id) {
     }
 
-    protected void beforeDelete(SIMPLE_DTO simple_dto) {
-    }
-
-    protected void beforeDelete(Iterable<SIMPLE_DTO> dtos) {
+    protected void beforeDelete(Iterable<Long> ids) {
     }
 
     protected void afterCreate(SIMPLE_DTO simple_dto) {
@@ -211,16 +208,9 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     }
 
     @Override
-    public void deleteInBatch(Iterable<SIMPLE_DTO> dtos) {
-        beforeDelete(dtos);
-        baseRepository.deleteInBatch(StreamSupport.stream(dtos.spliterator(), false).map(this::createEntity).collect(Collectors.toList()));
-        afterDelete();
-    }
-
-    @Override
-    public void delete(SIMPLE_DTO simple_dto) {
-        beforeDelete(simple_dto);
-        baseRepository.delete(createEntity(simple_dto));
+    public void deleteInBatch(Iterable<Long> ids) {
+        beforeDelete(ids);
+        baseRepository.deleteInBatch(StreamSupport.stream(ids.spliterator(), false).map(this::createEntity).collect(Collectors.toList()));
         afterDelete();
     }
 
@@ -264,9 +254,9 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     }
 
     @Override
-    public void deleteAll(Iterable<SIMPLE_DTO> dtos) {
+    public void deleteAll(Iterable<Long> ids) {
         beforeDelete();
-        baseRepository.deleteAll(StreamSupport.stream(dtos.spliterator(), false).map(this::createEntity).collect(Collectors.toList()));
+        baseRepository.deleteAll(StreamSupport.stream(ids.spliterator(), false).map(this::createEntity).collect(Collectors.toList()));
         afterDelete();
     }
 

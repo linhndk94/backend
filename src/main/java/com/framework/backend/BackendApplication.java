@@ -28,9 +28,8 @@ public class BackendApplication {
     public CommandLineRunner commandLineRunner(ObjectMapper objectMapper, DummyRepository dummyRepository) {
         return args -> {
             dummyRepository.deleteAllInBatch();
-            dummyRepository.save(Dummy.builder().name("Dummy name 1").build());
-            dummyRepository.save(Dummy.builder().name("Dummy name 2").build());
-            log.debug(objectMapper.writeValueAsString(dummyRepository.findAll()));
+            dummyRepository.save(Dummy.builder().name("Dummy name 1").phoneNumber("Phone number 1").build());
+            dummyRepository.save(Dummy.builder().name("Dummy name 2").phoneNumber("Phone number 2").build());
         };
     }
 }

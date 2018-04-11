@@ -13,5 +13,5 @@ import javax.persistence.Entity;
 @Entity
 public class Dummy extends BaseEntity {
     private String name;
-    private Integer phoneNumber;
+    private String phoneNumber;
 }
