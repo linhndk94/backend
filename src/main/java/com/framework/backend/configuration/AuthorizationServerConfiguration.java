@@ -15,7 +15,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     private AuthenticationManager authenticationManager;
 

@@ -1,10 +1,12 @@
 package com.framework.backend.dto.simple_dto;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
-@Data
-@EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 public class DummySimpleDto extends BaseSimpleDto {
     private String name;
 }

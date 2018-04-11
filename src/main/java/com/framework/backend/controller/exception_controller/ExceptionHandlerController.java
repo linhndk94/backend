@@ -26,6 +26,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
@@ -121,7 +122,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
         StringBuilder builder = new StringBuilder();
         builder.append(ex.getMethod());
         builder.append(" method is not supported for this request. Supported methods are ");
-        ex.getSupportedHttpMethods().forEach(t -> builder.append(t + " "));
+        builder.append(ex.getSupportedHttpMethods().stream().map(mediaType -> mediaType + " ").collect(Collectors.joining()));
         return ResponseDto.build().withHttpStatus(HttpStatus.METHOD_NOT_ALLOWED).withMessage(ex.getMessage()).withHttpHeaders(headers).withErrors(builder.toString()).toResponseEntity();
     }
 
@@ -131,7 +132,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
         StringBuilder builder = new StringBuilder();
         builder.append(ex.getContentType());
         builder.append(" media type is not supported. Supported media types are ");
-        ex.getSupportedMediaTypes().forEach(t -> builder.append(t + " "));
+        builder.append(ex.getSupportedMediaTypes().stream().map(mediaType -> mediaType + " ").collect(Collectors.joining()));
         return ResponseDto.build().withHttpStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE).withMessage(ex.getMessage()).withHttpHeaders(headers).withErrors(builder.substring(0, builder.length() - 2)).toResponseEntity();
     }
 

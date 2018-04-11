@@ -1,4 +1,4 @@
-package com.framework.backend.controller.rest_service;
+package com.framework.backend.controller.rest_controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +23,7 @@ import java.util.Optional;
 public abstract class BaseController<SIMPLE_DTO extends BaseSimpleDto, DETAIL_DTO extends SIMPLE_DTO, CREATE_DTO extends BaseCreateDto> {
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     protected abstract BaseService<SIMPLE_DTO, DETAIL_DTO, CREATE_DTO> getService();
 

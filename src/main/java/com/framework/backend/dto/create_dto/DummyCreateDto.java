@@ -1,12 +1,13 @@
 package com.framework.backend.dto.create_dto;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
-@Data
-@EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 public class DummyCreateDto extends BaseCreateDto {
     private String name;
-    private String username;
-    private String password;
+    private Integer phoneNumber;
 }

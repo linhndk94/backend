@@ -1,16 +1,13 @@
 package com.framework.backend.dto.detail_dto;
 
 import com.framework.backend.dto.simple_dto.DummySimpleDto;
-import com.framework.backend.entities.Role;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
-import java.util.List;
-
-@Data
-@EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 public class DummyDetailDto extends DummySimpleDto {
-    private String username;
-    private String password;
-    private List<Role> roles;
+    private Integer phoneNumber;
 }

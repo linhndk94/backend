@@ -1,0 +1,46 @@
+#server:
+#  port: 80
+spring:
+    datasource:
+#        url: jdbc:mysql://52.221.250.211:3306/either?useSSL=false&rewriteBatchedStatements=true&autoReconnect=true&useUnicode=true&createDatabaseIfNotExist=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+#        password: either
+#        username: root
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:h2:file:~/test
+        username: sa
+        password:
+        driver-class-name: org.h2.Driver
+        hikari:
+            data-source-properties:
+                cachePrepStmts: true
+                cacheResultSetMetadata: true
+                cacheServerConfiguration: true
+                elideSetAutoCommits: true
+                maintainTimeStats: false
+                prepStmtCacheSize: 250
+                prepStmtCacheSqlLimit: 2048
+                rewriteBatchedStatements: true
+                useLocalSessionState: true
+                useLocalTransactionState: true
+                useServerPrepStmts: true
+    jpa:
+        show-sql: true
+        hibernate:
+#            ddl-auto: update
+            ddl-auto: create-drop
+        properties:
+            hibernate:
+#                dialect: org.hibernate.dialect.MySQL5Dialect
+                dialect: org.hibernate.dialect.H2Dialect
+                enable_lazy_load_no_trans: true
+#                order_inserts: true
+#                order_updates: true
+#                use_sql_comments: true
+#                format_sql: true
+                jdbc:
+                    batch_size: 15
+                    batch_versioned_data: true
+                connection:
+                    CharSet: UTF-8
+                    characterEncoding: UTF-8
+                    useUnicode: true

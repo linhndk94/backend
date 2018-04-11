@@ -1,6 +1,5 @@
 package com.framework.backend.configuration;
 
-import com.google.common.base.Predicates;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.OAuthBuilder;
@@ -26,7 +25,7 @@ public class SwaggerConfiguration {
     @Bean
     public Docket docket() {
         return new Docket(DocumentationType.SWAGGER_2).select()
-                .apis(Predicates.not(RequestHandlerSelectors.basePackage("org.springframework.boot")))
+                .apis(RequestHandlerSelectors.basePackage("com.framework.backend.controller"))
                 .paths(PathSelectors.any()).build()
                 .securitySchemes(Collections.singletonList(oauth()))
                 .securityContexts(Collections.singletonList(securityContext()))

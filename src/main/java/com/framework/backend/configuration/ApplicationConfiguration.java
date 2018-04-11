@@ -19,7 +19,7 @@ public class ApplicationConfiguration {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         // TODO: 3/3/2018 Turn off this for production
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-//        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         return objectMapper;
     }
 
@@ -27,9 +27,4 @@ public class ApplicationConfiguration {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-//    @Autowired
-//    public void authenticationManager(AuthenticationManagerBuilder authenticationManagerBuilder, DummyRepository dummyRepository) throws Exception {
-//        authenticationManagerBuilder.userDetailsService(dummyRepository::getByUsername);
-//    }
 }

@@ -20,9 +20,13 @@ import java.util.stream.StreamSupport;
 
 public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends BaseSimpleDto, DETAIL_DTO extends SIMPLE_DTO, CREATE_DTO extends BaseCreateDto> implements BaseService<SIMPLE_DTO, DETAIL_DTO, CREATE_DTO> {
 
-    protected abstract Logger getLogger();
+    private BaseRepository<T> baseRepository;
 
-    protected abstract BaseRepository<T> getBaseRepository();
+    BaseServiceImpl(BaseRepository<T> baseRepository) {
+        this.baseRepository = baseRepository;
+    }
+
+    protected abstract Logger getLogger();
 
     protected abstract T createEntity(CREATE_DTO create_dto);
 
@@ -70,13 +74,31 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     protected void beforeDelete(Iterable<SIMPLE_DTO> dtos) {
     }
 
-    protected void afterCreate() {
+    protected void afterCreate(SIMPLE_DTO simple_dto) {
+    }
+
+    protected void afterCreate(List<SIMPLE_DTO> dtos) {
     }
 
     protected void afterRetrieve() {
     }
 
+    protected void afterRetrieve(SIMPLE_DTO simple_dto) {
+    }
+
+    protected void afterRetrieve(List<SIMPLE_DTO> dtos) {
+    }
+
+    protected void afterRetrieve(Page<SIMPLE_DTO> dtos) {
+    }
+
     protected void afterUpdate() {
+    }
+
+    protected void afterUpdate(SIMPLE_DTO simple_dto) {
+    }
+
+    protected void afterUpdate(List<SIMPLE_DTO> dtos) {
     }
 
     protected void afterDelete() {
@@ -90,7 +112,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     @Override
     public long count() {
         beforeRetrieve();
-        long temp = getBaseRepository().count();
+        long temp = baseRepository.count();
         afterRetrieve();
         return temp;
     }
@@ -100,8 +122,8 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
         beforeCreate(create_dto);
         T entity = createEntity(create_dto);
         entity.setId(null);
-        SIMPLE_DTO result = createSimpleDto(getBaseRepository().save(entity));
-        afterCreate();
+        SIMPLE_DTO result = createSimpleDto(baseRepository.save(entity));
+        afterCreate(result);
         return result;
     }
 
@@ -109,48 +131,48 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     public SIMPLE_DTO update(CREATE_DTO create_dto) {
         beforeUpdate(create_dto);
         checkExists(create_dto.getId());
-        SIMPLE_DTO result = createSimpleDto(getBaseRepository().save(createEntity(create_dto)));
-        afterUpdate();
+        SIMPLE_DTO result = createSimpleDto(baseRepository.save(createEntity(create_dto)));
+        afterUpdate(result);
         return result;
     }
 
     @Override
     public List<SIMPLE_DTO> findAll() {
         beforeRetrieve();
-        List<SIMPLE_DTO> result = getBaseRepository().findAll().stream().map(this::createSimpleDto).collect(Collectors.toList());
-        afterRetrieve();
+        List<SIMPLE_DTO> result = baseRepository.findAll().stream().map(this::createSimpleDto).collect(Collectors.toList());
+        afterRetrieve(result);
         return result;
     }
 
     @Override
     public List<SIMPLE_DTO> findAll(Sort sort) {
         beforeRetrieve();
-        List<SIMPLE_DTO> result = getBaseRepository().findAll(sort).stream().map(this::createSimpleDto).collect(Collectors.toList());
-        afterRetrieve();
+        List<SIMPLE_DTO> result = baseRepository.findAll(sort).stream().map(this::createSimpleDto).collect(Collectors.toList());
+        afterRetrieve(result);
         return result;
     }
 
     @Override
     public Page<SIMPLE_DTO> findAll(Pageable pageable) {
         beforeRetrieve();
-        Page<SIMPLE_DTO> result = getBaseRepository().findAll(pageable).map(this::createSimpleDto);
-        afterRetrieve();
+        Page<SIMPLE_DTO> result = baseRepository.findAll(pageable).map(this::createSimpleDto);
+        afterRetrieve(result);
         return result;
     }
 
     @Override
     public List<SIMPLE_DTO> findAllById(Iterable<Long> ids) {
         beforeRetrieve(ids);
-        List<SIMPLE_DTO> result = getBaseRepository().findAllById(ids).stream().map(this::createSimpleDto).collect(Collectors.toList());
-        afterRetrieve();
+        List<SIMPLE_DTO> result = baseRepository.findAllById(ids).stream().map(this::createSimpleDto).collect(Collectors.toList());
+        afterRetrieve(result);
         return result;
     }
 
     @Override
     public List<SIMPLE_DTO> saveAll(Iterable<CREATE_DTO> dtos) {
         beforeCreate(dtos);
-        List<SIMPLE_DTO> result = getBaseRepository().saveAll(StreamSupport.stream(dtos.spliterator(), false).map(this::createEntity).collect(Collectors.toList())).stream().map(this::createSimpleDto).collect(Collectors.toList());
-        afterCreate();
+        List<SIMPLE_DTO> result = baseRepository.saveAll(StreamSupport.stream(dtos.spliterator(), false).map(this::createEntity).collect(Collectors.toList())).stream().map(this::createSimpleDto).collect(Collectors.toList());
+        afterCreate(result);
         return result;
     }
 
@@ -158,15 +180,15 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     public List<SIMPLE_DTO> updateAll(Iterable<CREATE_DTO> dtos) {
         beforeUpdate(dtos);
         checkExists(dtos);
-        List<SIMPLE_DTO> result = getBaseRepository().saveAll(StreamSupport.stream(dtos.spliterator(), false).map(this::createEntity).collect(Collectors.toList())).stream().map(this::createSimpleDto).collect(Collectors.toList());
-        afterUpdate();
+        List<SIMPLE_DTO> result = baseRepository.saveAll(StreamSupport.stream(dtos.spliterator(), false).map(this::createEntity).collect(Collectors.toList())).stream().map(this::createSimpleDto).collect(Collectors.toList());
+        afterUpdate(result);
         return result;
     }
 
     @Override
     public void flush() {
         beforeUpdate();
-        getBaseRepository().flush();
+        baseRepository.flush();
         afterUpdate();
     }
 
@@ -174,8 +196,8 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     @Override
     public SIMPLE_DTO saveAndFlush(CREATE_DTO dto) {
         beforeCreate(dto);
-        SIMPLE_DTO result = createSimpleDto(getBaseRepository().saveAndFlush(createEntity(dto)));
-        afterCreate();
+        SIMPLE_DTO result = createSimpleDto(baseRepository.saveAndFlush(createEntity(dto)));
+        afterCreate(result);
         return result;
     }
 
@@ -183,36 +205,36 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     public SIMPLE_DTO updateAndFlush(CREATE_DTO dto) {
         beforeUpdate(dto);
         checkExists(dto);
-        SIMPLE_DTO result = createSimpleDto(getBaseRepository().saveAndFlush(createEntity(dto)));
-        afterUpdate();
+        SIMPLE_DTO result = createSimpleDto(baseRepository.saveAndFlush(createEntity(dto)));
+        afterUpdate(result);
         return result;
     }
 
     @Override
     public void deleteInBatch(Iterable<SIMPLE_DTO> dtos) {
         beforeDelete(dtos);
-        getBaseRepository().deleteInBatch(StreamSupport.stream(dtos.spliterator(), false).map(this::createEntity).collect(Collectors.toList()));
+        baseRepository.deleteInBatch(StreamSupport.stream(dtos.spliterator(), false).map(this::createEntity).collect(Collectors.toList()));
         afterDelete();
     }
 
     @Override
     public void delete(SIMPLE_DTO simple_dto) {
         beforeDelete(simple_dto);
-        getBaseRepository().delete(createEntity(simple_dto));
+        baseRepository.delete(createEntity(simple_dto));
         afterDelete();
     }
 
     @Override
     public void deleteById(Long id) {
         beforeDelete(id);
-        getBaseRepository().deleteById(id);
+        baseRepository.deleteById(id);
         afterDelete();
     }
 
     @Override
     public void deleteAllInBatch() {
         beforeDelete();
-        getBaseRepository().deleteAllInBatch();
+        baseRepository.deleteAllInBatch();
         afterDelete();
     }
 
@@ -220,15 +242,15 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     public DETAIL_DTO getOne(Long id) {
         beforeRetrieve(id);
         checkExists(id);
-        DETAIL_DTO result = createDetailDto(getBaseRepository().getOne(id));
-        afterRetrieve();
+        DETAIL_DTO result = createDetailDto(baseRepository.getOne(id));
+        afterRetrieve(result);
         return result;
     }
 
     @Override
     public boolean existsById(Long id) {
         beforeRetrieve(id);
-        boolean temp = getBaseRepository().existsById(id);
+        boolean temp = baseRepository.existsById(id);
         afterRetrieve();
         return temp;
     }
@@ -236,7 +258,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     @Override
     public Optional<DETAIL_DTO> findById(Long id) {
         beforeRetrieve();
-        Optional<DETAIL_DTO> result = Optional.of(createDetailDto(getBaseRepository().findById(id).get()));
+        Optional<DETAIL_DTO> result = baseRepository.findById(id).map(this::createDetailDto);
         afterRetrieve();
         return result;
     }
@@ -244,14 +266,14 @@ public abstract class BaseServiceImpl<T extends BaseEntity, SIMPLE_DTO extends B
     @Override
     public void deleteAll(Iterable<SIMPLE_DTO> dtos) {
         beforeDelete();
-        getBaseRepository().deleteAll(StreamSupport.stream(dtos.spliterator(), false).map(this::createEntity).collect(Collectors.toList()));
+        baseRepository.deleteAll(StreamSupport.stream(dtos.spliterator(), false).map(this::createEntity).collect(Collectors.toList()));
         afterDelete();
     }
 
     @Override
     public void deleteAll() {
         beforeDelete();
-        getBaseRepository().deleteAll();
+        baseRepository.deleteAll();
         afterDelete();
     }
 
